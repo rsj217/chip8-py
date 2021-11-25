@@ -1,0 +1,9 @@
+TITLE = "chip-8"
+ZOOM = 10
+SCREEN_WIDTH = 64
+SCREEN_HEIGHT = 32
+CLOCK_SPEED = 700
+TIMER_SPEED = 60
+
+BG_COLOR = (0xa0, 0xe6, 0xfa)
+FG_COLOR = (0xff, 0xff, 0xff)

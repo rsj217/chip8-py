@@ -1,0 +1,495 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>CPU 与指令 &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="基本指令" href="06_base_instruction.html" />
+    <link rel="prev" title="屏幕绘制" href="04_display_draw.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_emulator.html">模拟器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CPU 与指令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">CPU 简介</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chip8">CHIP8 指令</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fetch-decode-execute">指令循环 fetch-decode-execute</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_base_instruction.html">基本指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_frame_keyboard.html">帧率与按键</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorial</a> &raquo;</li>
+        
+      <li>CPU 与指令</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorial/05_cpu_instruction.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="cpu">
+<h1>CPU 与指令<a class="headerlink" href="#cpu" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>CPU 简介<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>计算机最重要的组成部分是 CPU(Center Process Unit)。CPU 主要包含运算器(ALU)，控制器(Control Unit)，寄存器(Register)和时钟。</p>
+<p>运算器主要是 ALU，用于进行代数运算和逻辑运算。代数运算是<code class="docutils literal notranslate"><span class="pre">加减乘除平方</span></code>等，逻辑运算是<code class="docutils literal notranslate"><span class="pre">与或非</span></code>的运算。 控制器主要负责对指令的译码，并对指令需要执行的各个操作发出控制信号。比如和内存总线交互，读写内存数据。
+x
+寄存器，顾名思义，主要用于将内存读取的数据或指令暂寄的地方。计算机的存储系统像是金字塔，容量越大读写速度越慢。寄存器就在 CPU 内部，它容量很小，但是读写速度很快。最后是 CPU 的时钟，指示 CPU 的时钟周期。</p>
+<p>CPU的几个部件，相互合作，完成计算工作。简化的CPU工作流可以总结为<code class="docutils literal notranslate"><span class="pre">取址执行</span></code>
+。在CPU的时钟周期内，控制器从PC寄存器的指令地址的内存读取数据，然后解析指令，并执行指令的语义。此外，在执行指令的时候，涉及到内存读写，缓存控制，外设IO通信等多种多样的工作任务。 <a class="footnote-reference brackets" href="#id7" id="id2">1</a></p>
+<p>Chip8的CPU比较简单，模拟器就可以根据<a class="reference internal" href="03_emulator.html"><span class="doc std std-doc">模拟器架构</span></a> 介绍的 CPU 进行实现。</p>
+</div>
+<div class="section" id="chip8">
+<h2>CHIP8 指令<a class="headerlink" href="#chip8" title="Permalink to this headline">¶</a></h2>
+<p>Chip8 的指令很简单，一共有<em>35</em>条指令。<a class="footnote-reference brackets" href="#id8" id="id3">2</a> 每一条指令都是<code class="docutils literal notranslate"><span class="pre">2-byte</span></code>大小。指令是大端字节序(Big-Endian)。<a class="footnote-reference brackets" href="#id9" id="id4">3</a></p>
+<p>Chip8 的内存是地址是由小到大。因此 Chip8 的指令，其低地址表示高字节，高地址表示低字节。其中高字节的前 4-bit 表示操作码(OPCODE)
+，每一个 OPCODE 表示不同类型的指令。高字节的后 4-bit 和低字节前 4-bit 通常是指待通用寄存器，最后4-bit是立即数。也有的指令，除了OPCODE，剩下的都是立即数。</p>
+<img alt="instrctuon-memory" class="align-center" src="../_images/instrctuon-memory.png" />
+<p>如图所示，指令<strong>0x1234</strong>在内存的存储是： <code class="docutils literal notranslate"><span class="pre">0x302</span></code>(低地址)存储了值<code class="docutils literal notranslate"><span class="pre">0x12</span></code>，<code class="docutils literal notranslate"><span class="pre">0x303</span></code>(高地址)存储了值<code class="docutils literal notranslate"><span class="pre">0x34</span></code>。低地址的<code class="docutils literal notranslate"><span class="pre">0x12</span></code> 左移<code class="docutils literal notranslate"><span class="pre">8bit</span></code>，然后与高地址<code class="docutils literal notranslate"><span class="pre">0x34</span></code>进行或(<code class="docutils literal notranslate"><span class="pre">|</span></code>)
+操作，得到最终指令为 <code class="docutils literal notranslate"><span class="pre">0x1234</span></code>。即 <code class="docutils literal notranslate"><span class="pre">0x12</span> <span class="pre">&lt;&lt;</span> <span class="pre">8</span> <span class="pre">|</span> <span class="pre">0x34</span></code></p>
+<p>指令<code class="docutils literal notranslate"><span class="pre">0x1234</span></code>的高字节是<code class="docutils literal notranslate"><span class="pre">0x12</span></code>，高<code class="docutils literal notranslate"><span class="pre">4-bit</span></code>是<code class="docutils literal notranslate"><span class="pre">0x1</span></code>，为 opcode。<code class="docutils literal notranslate"><span class="pre">0x1</span></code>的 opcode 表示<strong>执行跳转</strong>。<code class="docutils literal notranslate"><span class="pre">0x12</span></code>的低 <code class="docutils literal notranslate"><span class="pre">4-bit</span></code>是<code class="docutils literal notranslate"><span class="pre">0x2</span></code>，与低字节的<code class="docutils literal notranslate"><span class="pre">0x34</span></code>组成的是<code class="docutils literal notranslate"><span class="pre">0x234</span></code>
+为<code class="docutils literal notranslate"><span class="pre">12-bit</span></code>的立即数。最终这个指令表示 跳转地址<code class="docutils literal notranslate"><span class="pre">0x234</span></code>。</p>
+<p>下面另外几种 decode 指令举例：</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>指令描述</p></th>
+<th class="head"><p>类型</p></th>
+<th class="head"><p>指令解析</p></th>
+<th class="head"><p>含义</p></th>
+<th class="head"><p>示例</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>00E0</p></td>
+<td><p>Display</p></td>
+<td><p>opcode：0</p></td>
+<td><p>清屏</p></td>
+<td><p>00E0</p></td>
+<td><p>清除屏幕</p></td>
+</tr>
+<tr class="row-odd"><td><p>1NNN</p></td>
+<td><p>Flow</p></td>
+<td><p>opcode：1， 12-bit立即数：NNN</p></td>
+<td><p>跳转到地址 NNN</p></td>
+<td><p>1234</p></td>
+<td><p>跳转到地址 0x234</p></td>
+</tr>
+<tr class="row-even"><td><p>6XKK</p></td>
+<td><p>Const</p></td>
+<td><p>opcode：6， 寄存器：X，8-bit立即数：KK</p></td>
+<td><p>设置 Vx 的值为 KK</p></td>
+<td><p>6523</p></td>
+<td><p>设置 V5的值为 0x23， V5 = 0x23</p></td>
+</tr>
+<tr class="row-odd"><td><p>DXYN</p></td>
+<td><p>Display</p></td>
+<td><p>opcode：d， 寄存器：X，Y, 4-bit立即数：N</p></td>
+<td><p>绘制一个sprite，坐标为 (Vx, Vy)， 从地址寄存器读取 N byte数据</p></td>
+<td><p>D25F</p></td>
+<td><p>绘制一个。sprite，从坐标(V2, V5)开始，读取地址寄存器里 F byte 数据</p></td>
+</tr>
+</tbody>
+</table>
+<p>对于指令，我们可以实现是一个 Instruction 的类来做指令的解码, 该类提供各种解码的方法</p>
+<dl class="py class">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.05.1_fetch_decode_execute.</span></code><code class="sig-name descname"><span class="pre">Instruction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Instruction</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">decode_opcode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode_n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode_kk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode_nnn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="section" id="fetch-decode-execute">
+<h3>指令循环 fetch-decode-execute<a class="headerlink" href="#fetch-decode-execute" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="fetch">
+<h4>fetch<a class="headerlink" href="#fetch" title="Permalink to this headline">¶</a></h4>
+<p>Chip8 模拟器执行 CPU 循环的时候，进行取指执行。下面是其工作流的代码：</p>
+<p>CPU 指令周期方法：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.CPU.cycle">
+<code class="sig-prename descclassname"><span class="pre">CPU.</span></code><code class="sig-name descname"><span class="pre">cycle</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#CPU.cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.CPU.cycle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 取指</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+        <span class="c1"># 解码</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="c1"># 执行</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>CPU 取指方法：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.CPU.fetch">
+<code class="sig-prename descclassname"><span class="pre">CPU.</span></code><code class="sig-name descname"><span class="pre">fetch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#CPU.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.CPU.fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">high_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span><span class="p">]</span>
+        <span class="n">low_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">instruction</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_byte</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="n">low_byte</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span> <span class="o">=</span> <span class="n">Instruction</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>通过 PC 寄存器分别读取读取高低字节数据，然后把高字节左移 8-bit 和 低字节数据进行或操作。因 Chip8 每条指令2-byte，取指完毕之后，PC 自增 2，指向下一条需要执行的指令的高字节。指令获取之后，就存储在指令寄存器IR中。</p>
+</div>
+<div class="section" id="decode">
+<h4>decode<a class="headerlink" href="#decode" title="Permalink to this headline">¶</a></h4>
+<p>CPU 指令 decode 相关方法实际上是调用了 Instruction 的各类decode方法</p>
+<p>TODO decode 分析</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.CPU.decode">
+<code class="sig-prename descclassname"><span class="pre">CPU.</span></code><code class="sig-name descname"><span class="pre">decode</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#CPU.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.CPU.decode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>CPU的 decode 方法调用了 Instruction 的 decode 方法，后者会逐一解码 Instruction，并将结果存储在 Instruction 类的属性中。 下面是指令解码方法：</p>
+<p>decode获取操作码 opcode：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_opcode">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_opcode</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_opcode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_opcode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_opcode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0xF000</span>
+</pre></div>
+</div>
+<p>decode获取寄存器编号 x：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_x">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_x</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x0F00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
+</pre></div>
+</div>
+<p>decode获取寄存器编号 y：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_y">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_y</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x00F0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>decode获取立即数 n：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_n">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_n</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_n"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x000F</span>
+</pre></div>
+</div>
+<p>decode获取8-bit立即数 kk：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_kk">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_kk</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_kk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_kk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_kk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x00FF</span>
+</pre></div>
+</div>
+<p>decode获取12-bit地址立即数 NNN：</p>
+<dl class="py method">
+<dt id="src.tutorial.05.1_fetch_decode_execute.Instruction.decode_nnn">
+<code class="sig-prename descclassname"><span class="pre">Instruction.</span></code><code class="sig-name descname"><span class="pre">decode_nnn</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/src/tutorial/05/1_fetch_decode_execute.html#Instruction.decode_nnn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.05.1_fetch_decode_execute.Instruction.decode_nnn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">decode_nnn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x0FFF</span>
+</pre></div>
+</div>
+<p>decode之后，CPU类封装了上述结果的值，以python的属性方式定义；</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">opcode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">opcode</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">kk</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nnn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">nnn</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">n</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>执行<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>最后是 cpu 的执行，这也是chip8模拟器的核心。将会在下一节进行介绍。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>总结<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>CPU的任务概况而言是<code class="docutils literal notranslate"><span class="pre">取指执行</span></code>。Fetch-Decode-Execute 循环中。</p>
+<p>Chip8 的指令都是 2-byte 大小，CPU 循环时，PC 指针每次都是自增为 2。</p>
+<p>指令的高字节由内存的低地址组成，低字节由内存的高地址组成。高字节左移 8-bit 与低字节进行或运算，得到最终的指令。</p>
+<p>指令的高字节的高 4—bit 为opcode，剩下的 bit 位根据指令类型，可以依次为通用寄存器的编号(x, y)，8-bit 立即数 kk，12-bit 立即数地址NNN，4-bit 立即数N。</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>CPU 循环工作流可以参考这个<a class="reference external" href="http://www.mathcs.emory.edu/~cheung/Courses/170/Syllabus/01/intro-computer2.html">文档</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dd><p>super chip8 扩展了 Chip8 的指令系统</p>
+</dd>
+<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>大小端字节序是计算机编码常用的两种方法，所谓大端就是高位在左，低位在右。我们熟悉的十进制数字 123 就是大端序， 1 表示百，2 表示十，3表示个。如果是小端序则应该写成 321，高位在右。</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="06_base_instruction.html" class="btn btn-neutral float-right" title="基本指令" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="04_display_draw.html" class="btn btn-neutral float-left" title="屏幕绘制" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

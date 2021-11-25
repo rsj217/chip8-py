@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>帧率与按键 &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="TETRIS" href="09_tetris.html" />
+    <link rel="prev" title="更多指令" href="07_more_instruction.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_emulator.html">模拟器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_cpu_instruction.html">CPU 与指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_base_instruction.html">基本指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">帧率与按键</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">帧率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">按键控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">增加声音</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorial</a> &raquo;</li>
+        
+      <li>帧率与按键</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorial/08_frame_keyboard.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>帧率与按键<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="07_more_instruction.html"><span class="doc std std-doc">更多指令</span></a> 一节实现了 Chip8 的所有指令。但是遗留了定时器相关的逻辑。导致 俄罗斯方块 的程序卡死不动。下面将会增加定时器的处理逻辑。</p>
+<div class="section" id="id2">
+<h2>帧率<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Chip8 有两个定时器。delay timer 和 sound timer。它们两者的工作频率都是60HZ。即每 1/60 秒，如果当前的值大于0，就减少 1。对于 sound timer 而言，当其值大于 0， 则播放声音。</p>
+<dl class="py method">
+<dt id="src.tutorial.08.1_frame.CPU.ticker">
+<code class="sig-prename descclassname"><span class="pre">CPU.</span></code><code class="sig-name descname"><span class="pre">ticker</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/08/1_frame.html#CPU.ticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.08.1_frame.CPU.ticker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">ticker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sound_timer</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sound_timer</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="c1"># pygame.mixer.music.play()</span>
+</pre></div>
+</div>
+<p>除了 定时器的频率之外，模拟器的CPU的时钟频率也需要配置。现在的处理器主频都很高。我的机器是 2.6 GHz 。因此运行一次 cpu.cycle 方法的时间几乎可以忽略不计。</p>
+<p>为了控制帧率，让古老的 Chip8 在高速处理器上渲染正常一点。可以调整一下Chip8的时钟频率。通常 700Hz 的频率对大多数 Chip 都比较友好。新增两个常量</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">CLOCK_SPEED</span> <span class="o">=</span> <span class="mi">700</span>  <span class="c1"># cpu 主频 700Hz</span>
+<span class="n">TIMER_SPEED</span> <span class="o">=</span> <span class="mi">60</span>   <span class="c1"># 定时器频率 60Hz</span>
+</pre></div>
+</div>
+<p>主循环的方法，模拟 700 Hz的主频。可以直接 time.sleep(1/700) 就可以了。</p>
+<dl class="py method">
+<dt id="src.tutorial.08.1_frame.Machine.run">
+<code class="sig-prename descclassname"><span class="pre">Machine.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/08/1_frame.html#Machine.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.08.1_frame.Machine.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cycles</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">_keys_pressed_buf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">draw_flag</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">screen_buf</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">False</span>
+            
+            <span class="n">cycles</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">CLOCK_SPEED</span><span class="p">)</span>   <span class="c1"># 1 / 700 </span>
+            <span class="k">if</span> <span class="n">cycles</span> <span class="o">&gt;=</span> <span class="n">CLOCK_SPEED</span> <span class="o">/</span> <span class="n">TIMER_SPEED</span><span class="p">:</span> <span class="c1"># 每 60Hz ，定时器减少 1</span>
+                <span class="n">cycles</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">ticker</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>按键控制<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>指令 <strong>EX9E</strong> <strong>EXA1</strong>  <strong>FX0A</strong> 都是需要对键盘按键响应的读操作。当用户运行模拟器的时候，输入的按键需要被主循环的 pygame 捕获。因此我们需要在 Keyboard 的poll_event 方法处理按键。</p>
+<p>按键的结果就是更新 CPU的按键缓存属性<code class="docutils literal notranslate"><span class="pre">key_pressed_buf</span></code>。这个过程好比键盘响应了按键之后，给CPU发中断信号，然后CPU 更新按键标记。</p>
+<p>Keyboard 的方法修改如下</p>
+<dl class="py class">
+<dt id="src.tutorial.08.2_keyboard.Keyboard">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.08.2_keyboard.</span></code><code class="sig-name descname"><span class="pre">Keyboard</span></code><a class="reference internal" href="../_modules/src/tutorial/08/2_keyboard.html#Keyboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.08.2_keyboard.Keyboard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYUP</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">key_press</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">_KEYS</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">_KEYS</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
+                <span class="n">keys_pressed_buf</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYUP</span><span class="p">:</span>
+                <span class="n">keys_pressed_buf</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>增加声音<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>chip8 也支持声音，声音我们只需要使用pygame提供的原生功能。</p>
+</div>
+<div class="section" id="id5">
+<h2>总结<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>现代处理器都很快，相比之下，需要模拟 Chip8 比较低的主频。
+键盘处理的原理就是监听键盘事件，将按键结果响应到 CPU 的键盘缓存结构里。</p>
+<p>Well Done。 Chip8 模拟器完成了。可以使用更多的 rom 测试效果。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="09_tetris.html" class="btn btn-neutral float-right" title="TETRIS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="07_more_instruction.html" class="btn btn-neutral float-left" title="更多指令" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

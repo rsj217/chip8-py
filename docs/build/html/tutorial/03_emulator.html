@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>模拟器架构 &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="屏幕绘制" href="04_display_draw.html" />
+    <link rel="prev" title="Pygame 简介" href="02_pygame.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">模拟器架构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">组成结构</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#memory">Memory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cpu">CPU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#display">Display</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#keyboard">Keyboard</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_cpu_instruction.html">CPU 与指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_base_instruction.html">基本指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_frame_keyboard.html">帧率与按键</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorial</a> &raquo;</li>
+        
+      <li>模拟器架构</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorial/03_emulator.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>模拟器架构<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="01_chip8.html"><span class="doc std std-doc">Chip8简介</span></a> 介绍了 Chip8 的历史以及其基本组成。本文在此基础上，针对 Chip8 的各个组件的开始编码，构建 Chip8 模拟器的基本骨架。
+接下来再根据 SPEC，把各个组件的功能实现完成。Chip8 模拟器就大功告成了。</p>
+<div class="section" id="id2">
+<h2>组成结构<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<img alt="chip8-emulator-design-overview" class="align-center" src="../_images/chip8-emulator-design-overview.png" />
+<p>从结构图看到 Chip8 的组件有 CPU，Memory，Display 和 Keyboard 四个主要的模块。使用 Python 定义这些组件为 class。模拟器的主要程序结构如下</p>
+<p>src/tutorial/emulator/1_machine.py</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Memory</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Display</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">CPU</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span> <span class="o">=</span> <span class="n">CPU</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># cpu 指令循环</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+            <span class="c1"># 监听处理键盘事件</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">poll_event</span><span class="p">()</span>
+            <span class="c1"># 渲染屏幕</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">machine</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">()</span>
+    <span class="n">machine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+</pre></div>
+</div>
+<p>上述的代码是 Chip8 的基本骨架。与 pygame 的主框架非常相似。Machine 有处理器<code class="docutils literal notranslate"><span class="pre">CPU</span></code>，外设键盘<code class="docutils literal notranslate"><span class="pre">Keyboard</span></code>和外设显示器<code class="docutils literal notranslate"><span class="pre">Display</span></code>。
+三个类组成。Machine 运行的时候，模拟器处于一个无限循环中，然后执行 CPU的指令循环，随后响应键盘事件和绘制屏幕。此时一个时钟流程完成，进入下一个周而复始的流程。</p>
+<p>在 CPU 内部，内存 Memory 抽象为 CPU 的一个内部属性。这样方便 CPU 读写内存的操作。真实的硬件系统，CPU 通过内存总线和 Memory 进行通信。模拟器就忽略内存总线，直接把内存作为CPU的一个内部属性。</p>
+<div class="section" id="memory">
+<h3>Memory<a class="headerlink" href="#memory" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="o">+---------------+=</span> <span class="mh">0x000</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="n">Start</span> <span class="n">of</span> <span class="n">Chip</span><span class="o">-</span><span class="mi">8</span> <span class="n">RAM</span> 
+    <span class="o">|</span> <span class="mh">0x000</span> <span class="n">to</span> <span class="mh">0x1FF</span><span class="o">|</span>
+    <span class="o">|</span> <span class="n">Reserved</span> <span class="k">for</span>  <span class="o">|</span>
+    <span class="o">|</span>  <span class="n">interpreter</span>  <span class="o">|</span>
+    <span class="o">+---------------+=</span> <span class="mh">0x200</span> <span class="p">(</span><span class="mi">512</span><span class="p">)</span> <span class="n">Start</span> <span class="n">of</span> <span class="n">most</span> <span class="n">Chip</span><span class="o">-</span><span class="mi">8</span> <span class="n">programs</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>    
+    <span class="o">+-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-+=</span> <span class="mh">0x600</span> <span class="p">(</span><span class="mi">1536</span><span class="p">)</span> <span class="n">Start</span> <span class="n">of</span> <span class="n">ETI</span> <span class="mi">660</span> <span class="n">Chip</span><span class="o">-</span><span class="mi">8</span> <span class="n">programs</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span> <span class="mh">0x200</span> <span class="n">to</span> <span class="mh">0xFFF</span><span class="o">|</span>
+    <span class="o">|</span>     <span class="n">Chip</span><span class="o">-</span><span class="mi">8</span>    <span class="o">|</span>
+    <span class="o">|</span> <span class="n">Program</span> <span class="o">/</span> <span class="n">Data</span><span class="o">|</span>
+    <span class="o">|</span>     <span class="n">Space</span>     <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">|</span>               <span class="o">|</span>
+    <span class="o">+---------------+=</span> <span class="mh">0xFFF</span> <span class="p">(</span><span class="mi">4095</span><span class="p">)</span> <span class="n">End</span> <span class="n">of</span> <span class="n">Chip</span><span class="o">-</span><span class="mi">8</span> <span class="n">RAM</span>
+</pre></div>
+</div>
+<p>如上图所示，Chip8 的内存是<strong>4-KB</strong>的大小。每一个内存单元大小为<strong>8-bit</strong>，即<strong>1-byte</strong>。编号从<code class="docutils literal notranslate"><span class="pre">0x0000</span></code>开始，最后一个是<code class="docutils literal notranslate"><span class="pre">0x0FFF</span></code>，从上往下，编号依次变大。一共可以分为<code class="docutils literal notranslate"><span class="pre">4096(4</span> <span class="pre">*</span> <span class="pre">1024)</span></code>
+个内存单元。内存的地址大小可以使用<code class="docutils literal notranslate"><span class="pre">12-bit</span></code>大小。 地址的描述通常使用三位的十六进制表示。即 0x200，0xFFF 等。 <a class="footnote-reference brackets" href="#id10" id="id3">1</a></p>
+<ul class="simple">
+<li><p>0x000 ~ 0x1FF: chip8 系统内存空间，模拟器则用这部分内容存储 Chip8 的<code class="docutils literal notranslate"><span class="pre">Font</span></code>数据。 <a class="footnote-reference brackets" href="#id11" id="id4">2</a></p></li>
+<li></li>
+</ul>
+<p>font是<code class="docutils literal notranslate"><span class="pre">0~f</span></code>的的数据数字数据，每一个数字有 5-bytes 大小，8x5 个像素。如：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>+---------------------+-----------------+--------------------+-------------------+  
+| Symbol  | Address   | Sprite          | Binary             | Hex               |  
++=====================+=================+====================+===================+  
+| 0       | 0x050     | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 1       | 0x055     |   *             | 00100000           | 0x20              |  
+|         |           |  **             | 01100000           | 0x60              |  
+|         |           |   *             | 00100000           | 0x20              |  
+|         |           |   *             | 00100000           | 0x20              |  
+|         |           |  ***            | 01110000           | 0x70              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 2       | 0x05A     | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 3       | 0x05F     | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 4       | 0x064     | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           |    *            | 00010000           | 0x10              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 5       | 0x069     | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 6       | 0x06E     | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 7       | 0x073     | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           |   *             | 00100000           | 0x20              |  
+|         |           |  *              | 01000000           | 0x40              |  
+|         |           |  *              | 01000000           | 0x40              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 8       | 0x078     | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 9       | 0x07D     | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           |    *            | 00010000           | 0x10              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 10      | 0x082     | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 11      | 0x087     | ***             | 11100000           | 0xE0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ***             | 11100000           | 0xE0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ***             | 11100000           | 0xE0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 12      | 0x08C     | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 13      | 0x091     | ***             | 11100000           | 0xE0              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | *  *            | 10010000           | 0x90              |  
+|         |           | ***             | 11100000           | 0xE0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 14      | 0x096     | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
++---------+-----------+-----------------+--------------------+-------------------+  
+| 15      | 0x09B     | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | ****            | 11110000           | 0xF0              |  
+|         |           | *               | 10000000           | 0x80              |  
+|         |           | *               | 10000000           | 0x80              |  
++---------+-----------+-----------------+--------------------+-------------------+
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>0x200 ~ 0xE9F: chip8 程序可以随意使用的空间。实际上，0x200~0xFFF 都可以作为程序使用，现在的程序也很少有用到比0xE9F 还大的地址。</p></li>
+<li><p>0xEA0 ~ 0xEFF: 保留给栈以及其他内部应用。实现模拟器的时候，可以独立使用一个数据结构来作为栈，因此这一块内存可以给程序使用。</p></li>
+<li><p>0xF00 ~ 0xFFF: 保留给屏幕显示使用的 buffer。Chip8 的分辨率是 64 * 32，每一个 bit 一个像素。一共 256 个字节，对应内存地址为0xF00 ~
+0xFFF。与栈一样，可以独立使用一个数据结构来作为屏幕显示用到buffer。不需要使用这一部分内存。</p></li>
+</ul>
+<p>下面是内存的代码实现：</p>
+<dl class="py class">
+<dt id="src.tutorial.03.2_memory_define.Memory">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.03.2_memory_define.</span></code><code class="sig-name descname"><span class="pre">Memory</span></code><a class="reference internal" href="../_modules/src/tutorial/03/2_memory_define.html#Memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.03.2_memory_define.Memory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 字体数据</span>
+<span class="n">_FONTSET</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 0</span>
+            <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x70</span><span class="p">,</span>  <span class="c1"># 1</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 2</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 3</span>
+            <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span>  <span class="c1"># 4</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 5</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 6</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span>  <span class="c1"># 7</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 8</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 9</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span>  <span class="c1"># A</span>
+            <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span>  <span class="c1"># B</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># C</span>
+            <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span>  <span class="c1"># D</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># E</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">]</span>  <span class="c1"># F</span>
+
+
+<span class="k">class</span> <span class="nc">Memory</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 4KB memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span>
+        <span class="c1"># stack</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_FONTSET</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_FONTSET</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">stack_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stack_push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cpu">
+<h3>CPU<a class="headerlink" href="#cpu" title="Permalink to this headline">¶</a></h3>
+<p>Chip8 的CPU主要用寄存器(register)， 定时器(timer)，按键缓存(key_pressed_buf)，屏幕缓存(screen_buf)组成。</p>
+<div class="section" id="id5">
+<h4>寄存器<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>通用寄存器：16个 8-bit 的通用寄存器，记为<code class="docutils literal notranslate"><span class="pre">V0</span> <span class="pre">~</span> <span class="pre">VF</span></code>，其中<code class="docutils literal notranslate"><span class="pre">VF</span></code>用来表示 flag 标记。可以用一个 16 长度数组表示，数组的每一个元素是一个寄存器，每个元素的类型是 uint8，当然 python 可以统一使用 int 表示</p></li>
+<li><p>程序计数器：一个 16-bit 的程序计数器，即PC寄存器。初始值为0x200。Chip8 的内存是4k，实际上PC的最大值是 12-bit。</p></li>
+<li><p>索引寄存器：一个 16-bit 的地址索引寄存器。</p></li>
+<li><p>栈顶寄存器：8-bit 的栈顶寄存器，指向当前栈顶。因为 Memory 实现使用了python的list接口，直接使用 append 入栈和 pop 出栈，这个寄存器可以忽略。</p></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h4>计时器<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>两个 8-bit 的定时器，一个 delay timer, 一个 sound timer，都按照 60hz 的频率递减直到 0。</p>
+</div>
+<div class="section" id="id7">
+<h4>按键缓存<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>使用一个大小 16 的列表作为按键缓存，映射了 Chip8 的按键，按下的键其值为 1，未按的键是 0。键盘按键的映射留在 Keyboard 组件实现的时候再介绍。</p>
+</div>
+<div class="section" id="id8">
+<h4>屏幕缓存<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>传统的 Chip8 使用内存的 0xF00 ~ 0xFFF 用作屏幕缓存。这里使用一个二维列表，作为 CPU 一个属性字段。</p>
+<p>下面是 CPU 模块的定义代码实现：</p>
+<dl class="py class">
+<dt id="src.tutorial.03.3_cpu_define.CPU">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.03.3_cpu_define.</span></code><code class="sig-name descname"><span class="pre">CPU</span></code><a class="reference internal" href="../_modules/src/tutorial/03/3_cpu_define.html#CPU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.03.3_cpu_define.CPU" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CPU</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+        <span class="c1"># 8 bits register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">16</span>
+
+        <span class="c1"># 16 bits register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="mh">0x200</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">640</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">320</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys_pressed_buf</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">16</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sound_timer</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="display">
+<h3>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h3>
+<p>用来显示的 Display 模块相对简单，它本身需要初始化 pygame 和 canvas 对象。然后提供绘图和渲染的方法。具体的方法实现留到下一节再介绍。当前只需要知道 Display 的初始化即可。</p>
+<dl class="py class">
+<dt id="src.tutorial.03.4_display_define.Display">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.03.4_display_define.</span></code><code class="sig-name descname"><span class="pre">Display</span></code><a class="reference internal" href="../_modules/src/tutorial/03/4_display_define.html#Display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.03.4_display_define.Display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Display</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">((</span><span class="n">SCREEN_WIDTH</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">BG_COLOR</span><span class="p">)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Display 类进行 pygame 的初始化，设置canvas。</p>
+</div>
+<div class="section" id="keyboard">
+<h3>Keyboard<a class="headerlink" href="#keyboard" title="Permalink to this headline">¶</a></h3>
+<p>Keyboard 模块和 Display 模块类似，自身的没有属性，提供了pygame键盘处理的绑定方法而已。</p>
+<p>键盘映射，左边是 Chip8 的按键，右边是键盘的按键。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1 2 3 C        1 2 3 4
+4 5 6 D   -&gt;   Q W E R
+7 8 9 E        A S D F
+A 0 B F        Z X C V
+</pre></div>
+</div>
+<dl class="py class">
+<dt id="src.tutorial.03.5_keyboard_define.Keyboard">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">src.tutorial.03.5_keyboard_define.</span></code><code class="sig-name descname"><span class="pre">Keyboard</span></code><a class="reference internal" href="../_modules/src/tutorial/03/5_keyboard_define.html#Keyboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.03.5_keyboard_define.Keyboard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_1</span><span class="p">:</span> <span class="mh">0x1</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_2</span><span class="p">:</span> <span class="mh">0x2</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_3</span><span class="p">:</span> <span class="mh">0x3</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_4</span><span class="p">:</span> <span class="mh">0xC</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_q</span><span class="p">:</span> <span class="mh">0x4</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_w</span><span class="p">:</span> <span class="mh">0x5</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_e</span><span class="p">:</span> <span class="mh">0x6</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_r</span><span class="p">:</span> <span class="mh">0xD</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_a</span><span class="p">:</span> <span class="mh">0x7</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_s</span><span class="p">:</span> <span class="mh">0x8</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_d</span><span class="p">:</span> <span class="mh">0x9</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_f</span><span class="p">:</span> <span class="mh">0xE</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_z</span><span class="p">:</span> <span class="mh">0xA</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_x</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_c</span><span class="p">:</span> <span class="mh">0xB</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_v</span><span class="p">:</span> <span class="mh">0xF</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>总结<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>CHIP8 模拟器定义为 Machine 类，它由 CPU，Memory，Keyboard 和 Display 几个部分组成。这也是冯诺依曼结构的基本组成。</p>
+<p>模拟器的CPU由内存和寄存器组成，根据 Chip8 的 SPEC 定义了一些寄存器。</p>
+<p>栈和视频缓存并没有使用内存对象，而是 CPU 内部独立的数据结构，这样实现比较方便，原理一致。</p>
+<p>整个模拟器的工作流和 pygame 绘制图像的方式类似。也就是在主循环中进行 CPU 的 cycle 执行，处理键盘事件和绘制刷新屏幕。</p>
+<p>至此，一个简单的模拟器(虚拟机)的工作原理介绍完毕。接下来就是针对 Chip8 的具体 SPEC，one step by step 实现完整的功能。</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p>Chip8 的地址范围是<code class="docutils literal notranslate"><span class="pre">0~4KB</span></code>，使用<code class="docutils literal notranslate"><span class="pre">12-bit</span></code>的大小即可覆盖，可是编程语言没有<code class="docutils literal notranslate"><span class="pre">12-bit</span></code>大小数据结构，通常地址类型是一个<code class="docutils literal notranslate"><span class="pre">2-byte</span></code>大小的结构。如 golang 的 uint16 或 rust 中的 u16。</p>
+</dd>
+<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p>更多的font数据可以参考<a class="reference external" href="http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#font">font</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="04_display_draw.html" class="btn btn-neutral float-right" title="屏幕绘制" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="02_pygame.html" class="btn btn-neutral float-left" title="Pygame 简介" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

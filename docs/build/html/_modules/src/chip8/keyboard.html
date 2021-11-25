@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>src.chip8.keyboard &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>src.chip8.keyboard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for src.chip8.keyboard</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">::</span>
+
+<span class="sd">        Keyboard                    Chip-8</span>
+<span class="sd">    +---+---+---+---+           +---+---+---+---+</span>
+<span class="sd">    | 1 | 2 | 3 | 4 |           | 1 | 2 | 3 | C |</span>
+<span class="sd">    +---+---+---+---+           +---+---+---+---+</span>
+<span class="sd">    | Q | W | E | R |           | 4 | 5 | 6 | D |</span>
+<span class="sd">    +---+---+---+---+     =&gt;    +---+---+---+---+</span>
+<span class="sd">    | A | S | D | F |           | 7 | 8 | 9 | E |</span>
+<span class="sd">    +---+---+---+---+           +---+---+---+---+</span>
+<span class="sd">    | Z | X | C | V |           | A | 0 | B | F |</span>
+<span class="sd">    +---+---+---+---+           +---+---+---+---+</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="n">_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_1</span><span class="p">:</span> <span class="mh">0x1</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_2</span><span class="p">:</span> <span class="mh">0x2</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_3</span><span class="p">:</span> <span class="mh">0x3</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_4</span><span class="p">:</span> <span class="mh">0xC</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_q</span><span class="p">:</span> <span class="mh">0x4</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_w</span><span class="p">:</span> <span class="mh">0x5</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_e</span><span class="p">:</span> <span class="mh">0x6</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_r</span><span class="p">:</span> <span class="mh">0xD</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_a</span><span class="p">:</span> <span class="mh">0x7</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_s</span><span class="p">:</span> <span class="mh">0x8</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_d</span><span class="p">:</span> <span class="mh">0x9</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_f</span><span class="p">:</span> <span class="mh">0xE</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_z</span><span class="p">:</span> <span class="mh">0xA</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_x</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_c</span><span class="p">:</span> <span class="mh">0xB</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_v</span><span class="p">:</span> <span class="mh">0xF</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="Keyboard"><a class="viewcode-back" href="../../../chip8/keyboard.html#src.chip8.keyboard.Keyboard">[docs]</a><span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Keyboard.poll_event"><a class="viewcode-back" href="../../../chip8/keyboard.html#src.chip8.keyboard.Keyboard.poll_event">[docs]</a>    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYUP</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">key_press</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Keyboard.key_press"><a class="viewcode-back" href="../../../chip8/keyboard.html#src.chip8.keyboard.Keyboard.key_press">[docs]</a>    <span class="k">def</span> <span class="nf">key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">keys_pressed_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">_KEYS</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">_KEYS</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
+                <span class="n">keys_pressed_buf</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYUP</span><span class="p">:</span>
+                <span class="n">keys_pressed_buf</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

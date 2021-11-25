@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>基本指令 &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="更多指令" href="07_more_instruction.html" />
+    <link rel="prev" title="CPU 与指令" href="05_cpu_instruction.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_emulator.html">模拟器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_cpu_instruction.html">CPU 与指令</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">基本指令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">二进制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ibm">IBM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">指令执行</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_frame_keyboard.html">帧率与按键</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorial</a> &raquo;</li>
+        
+      <li>基本指令</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorial/06_base_instruction.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>基本指令<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="04_display_draw.html"><span class="doc std std-doc">屏幕绘制</span></a> 一节，我们通过指定屏幕二维数组 screen_buf 在屏幕显示了 <code class="docutils literal notranslate"><span class="pre">IBM</span></code>
+的图案。本节的目标就是使用 Chip8 加载 ibm 的 rom 文件，通过 CPU 的解析执行 Chip8 指令，来显示 IBM 的图像。</p>
+<div class="section" id="id2">
+<h2>二进制<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>chip8 的 rom 文件都是二进制文件。使用 python 可以很方便的读取。下面是代码:</p>
+<dl class="py function">
+<dt id="src.tutorial.06.1_load_rom.load_file">
+<code class="sig-prename descclassname"><span class="pre">src.tutorial.06.1_load_rom.</span></code><code class="sig-name descname"><span class="pre">load_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/src/tutorial/06/1_load_rom.html#load_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.1_load_rom.load_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">)):</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+<p>Machine 类也增加<code class="docutils literal notranslate"><span class="pre">load_rom</span></code>方法</p>
+<dl class="py method">
+<dt id="src.tutorial.06.1_load_rom.Machine.load_rom">
+<code class="sig-prename descclassname"><span class="pre">Machine.</span></code><code class="sig-name descname"><span class="pre">load_rom</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rom_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/1_load_rom.html#Machine.load_rom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.1_load_rom.Machine.load_rom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">load_rom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rom_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_file</span><span class="p">(</span><span class="n">rom_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">load_rom</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Memory 类增加读取 rom 到ram中</p>
+<dl class="py function">
+<dt id="src.tutorial.06.1_load_rom.Memory.write">
+<code class="sig-prename descclassname"><span class="pre">src.tutorial.06.1_load_rom.Memory.</span></code><code class="sig-name descname"><span class="pre">write</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tutorial.06.1_load_rom.Memory.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span><span class="p">[</span><span class="n">START_ADDR</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>chip8用户程序的内存地址是<code class="docutils literal notranslate"><span class="pre">0x200</span></code>开始的，因此读取rom的数据也从<code class="docutils literal notranslate"><span class="pre">0x200</span></code>开始。</p>
+</div>
+<div class="section" id="ibm">
+<h2>IBM<a class="headerlink" href="#ibm" title="Permalink to this headline">¶</a></h2>
+<p>使用十六进制编辑器可以打开<code class="docutils literal notranslate"><span class="pre">IBM.bin</span></code>的rom文件，然后看到其数据为 ：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0x00, 0xe0, 0xa2, 0x2a, 0x60, 0x0c, 0x61, 0x08, 0xd0, 0x1f, 0x70, 0x09, 0xa2, 0x39, 0xd0, 0x1f,
+0xa2, 0x48, 0x70, 0x08, 0xd0, 0x1f, 0x70, 0x04, 0xa2, 0x57, 0xd0, 0x1f, 0x70, 0x08, 0xa2, 0x66,
+0xd0, 0x1f, 0x70, 0x08, 0xa2, 0x75, 0xd0, 0x1f, 0x12, 0x28, 0xff, 0x00, 0xff, 0x00, 0x3c, 0x00,
+0x3c, 0x00, 0x3c, 0x00, 0x3c, 0x00, 0xff, 0x00, 0xff, 0xff, 0x00, 0xff, 0x00, 0x38, 0x00, 0x3f,
+0x00, 0x3f, 0x00, 0x38, 0x00, 0xff, 0x00, 0xff, 0x80, 0x00, 0xe0, 0x00, 0xe0, 0x00, 0x80, 0x00,
+0x80, 0x00, 0xe0, 0x00, 0xe0, 0x00, 0x80, 0xf8, 0x00, 0xfc, 0x00, 0x3e, 0x00, 0x3f, 0x00, 0x3b,
+0x00, 0x39, 0x00, 0xf8, 0x00, 0xf8, 0x03, 0x00, 0x07, 0x00, 0x0f, 0x00, 0xbf, 0x00, 0xfb, 0x00,
+0xf3, 0x00, 0xe3, 0x00, 0x43, 0xe0, 0x00, 0xe0, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x80,
+0x00, 0xe0, 0x00, 0xe0
+</pre></div>
+</div>
+<p>反汇编为如下的指令：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>start:
+             0x0200     CLS
+             0x0202     LD I, lbl_0x022a
+             0x0204     LD V0, 0x0c
+             0x0206     LD V1, 0x08
+             0x0208     DRW V0, V1, 0x0f
+             0x020a     ADD V0, 0x09
+             0x020c     LD I, lbl_0x0239
+             0x020e     DRW V0, V1, 0x0f
+             0x0210     LD I, lbl_0x0248
+             0x0212     ADD V0, 0x08
+             0x0214     DRW V0, V1, 0x0f
+             0x0216     ADD V0, 0x04
+             0x0218     LD I, lbl_0x0257
+             0x021a     DRW V0, V1, 0x0f
+             0x021c     ADD V0, 0x08
+             0x021e     LD I, lbl_0x0266
+             0x0220     DRW V0, V1, 0x0f
+             0x0222     ADD V0, 0x08
+             0x0224     LD I, lbl_0x0275
+             0x0226     DRW V0, V1, 0x0f
+lbl_0x0228:
+             0x0228     JP lbl_0x0228
+lbl_0x022a:
+             0x022a     DB 0xff    ; 11111111
+             0x022b     DB 0x00    ;
+             0x022c     DB 0xff    ; 11111111
+             0x022d     DB 0x00    ;
+             0x022e     DB 0x3c    ;   1111
+             0x022f     DB 0x00    ;
+             0x0230     DB 0x3c    ;   1111
+             0x0231     DB 0x00    ;
+             0x0232     DB 0x3c    ;   1111
+             0x0233     DB 0x00    ;
+             0x0234     DB 0x3c    ;   1111
+             0x0235     DB 0x00    ;
+             0x0236     DB 0xff    ; 11111111
+             0x0237     DB 0x00    ;
+             0x0238     DB 0xff    ; 11111111
+lbl_0x0239:
+             0x0239     DB 0xff    ; 11111111
+             0x023a     DB 0x00    ;
+             0x023b     DB 0xff    ; 11111111
+             0x023c     DB 0x00    ;
+             0x023d     DB 0x38    ;   111
+             0x023e     DB 0x00    ;
+             0x023f     DB 0x3f    ;   111111
+             0x0240     DB 0x00    ;
+             0x0241     DB 0x3f    ;   111111
+             0x0242     DB 0x00    ;
+             0x0243     DB 0x38    ;   111
+             0x0244     DB 0x00    ;
+             0x0245     DB 0xff    ; 11111111
+             0x0246     DB 0x00    ;
+             0x0247     DB 0xff    ; 11111111
+lbl_0x0248:
+             0x0248     DB 0x80    ; 1
+             0x0249     DB 0x00    ;
+             0x024a     DB 0xe0    ; 111
+             0x024b     DB 0x00    ;
+             0x024c     DB 0xe0    ; 111
+             0x024d     DB 0x00    ;
+             0x024e     DB 0x80    ; 1
+             0x024f     DB 0x00    ;
+             0x0250     DB 0x80    ; 1
+             0x0251     DB 0x00    ;
+             0x0252     DB 0xe0    ; 111
+             0x0253     DB 0x00    ;
+             0x0254     DB 0xe0    ; 111
+             0x0255     DB 0x00    ;
+             0x0256     DB 0x80    ; 1
+lbl_0x0257:
+             0x0257     DB 0xf8    ; 11111
+             0x0258     DB 0x00    ;
+             0x0259     DB 0xfc    ; 111111
+             0x025a     DB 0x00    ;
+             0x025b     DB 0x3e    ;   11111
+             0x025c     DB 0x00    ;
+             0x025d     DB 0x3f    ;   111111
+             0x025e     DB 0x00    ;
+             0x025f     DB 0x3b    ;   111 11
+             0x0260     DB 0x00    ;
+             0x0261     DB 0x39    ;   111  1
+             0x0262     DB 0x00    ;
+             0x0263     DB 0xf8    ; 11111
+             0x0264     DB 0x00    ;
+             0x0265     DB 0xf8    ; 11111
+lbl_0x0266:
+             0x0266     DB 0x03    ;       11
+             0x0267     DB 0x00    ;
+             0x0268     DB 0x07    ;      111
+             0x0269     DB 0x00    ;
+             0x026a     DB 0x0f    ;     1111
+             0x026b     DB 0x00    ;
+             0x026c     DB 0xbf    ; 1 111111
+             0x026d     DB 0x00    ;
+             0x026e     DB 0xfb    ; 11111 11
+             0x026f     DB 0x00    ;
+             0x0270     DB 0xf3    ; 1111  11
+             0x0271     DB 0x00    ;
+             0x0272     DB 0xe3    ; 111   11
+             0x0273     DB 0x00    ;
+             0x0274     DB 0x43    ;  1    11
+lbl_0x0275:
+             0x0275     DB 0xe0    ; 111
+             0x0276     DB 0x00    ;
+             0x0277     DB 0xe0    ; 111
+             0x0278     DB 0x00    ;
+             0x0279     DB 0x80    ; 1
+             0x027a     DB 0x00    ;
+             0x027b     DB 0x80    ; 1
+             0x027c     DB 0x00    ;
+             0x027d     DB 0x80    ; 1
+             0x027e     DB 0x00    ;
+             0x027f     DB 0x80    ; 1
+             0x0280     DB 0x00    ;
+             0x0281     DB 0xe0    ; 111
+             0x0282     DB 0x00    ;
+             0x0283     DB 0xe0    ; 111
+</pre></div>
+</div>
+<p>地址 <code class="docutils literal notranslate"><span class="pre">0x0200</span> <span class="pre">~</span> <span class="pre">0x0228</span></code> 是 rom 的指令，<code class="docutils literal notranslate"><span class="pre">0x22a</span> <span class="pre">~</span> <span class="pre">0x283</span></code> 是数据。 从数据可以看到，chip8 以 sprite 方式绘图。<a class="footnote-reference brackets" href="#id7" id="id3">1</a> 如<code class="docutils literal notranslate"><span class="pre">0x22a</span> <span class="pre">~</span> <span class="pre">0x238</span></code> 是<code class="docutils literal notranslate"><span class="pre">15-byte</span></code>的sprite。 Sprite绘图方式将在后面介绍。</p>
+<p>由此可见，想要打印 IBM 的突然，只需要实现下面几个指令：</p>
+<ul class="simple">
+<li><p>00E0: 清屏 CLS</p></li>
+<li><p>1NNN: 跳转 JP NNN</p></li>
+<li><p>6XKK: 设置寄存器 LD Vx, KK</p></li>
+<li><p>7XKK: 将值添加到寄存器 ADD Vx, KK</p></li>
+<li><p>ANNN: 设置地址寄存器 LD I, NNN</p></li>
+<li><p>DXYN: 显示/绘制 DRW Vx, Vy, N</p></li>
+</ul>
+<p>这些指令放在 CPU.execute 方法实现。这是一个巨大的<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">elif</span></code> 语句。<a class="footnote-reference brackets" href="#id8" id="id4">2</a></p>
+<div class="section" id="id5">
+<h3>指令执行<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>CPU.execute 方法实现指令的执行。下面是这几条指令的代码。</p>
+<dl class="py method">
+<dt id="src.tutorial.06.2_ibm_rom.CPU.execute">
+<code class="sig-prename descclassname"><span class="pre">CPU.</span></code><code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/2_ibm_rom.html#CPU.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.2_ibm_rom.CPU.execute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x0000</span><span class="p">:</span>
+            <span class="c1"># 00E0</span>
+            <span class="c1"># CLS</span>
+            <span class="c1"># clear the display</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x00E0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_screen</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># 1NNN</span>
+        <span class="c1"># JP addr</span>
+        <span class="c1"># jump to location nnn</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x1000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="n">addr</span>
+
+
+        <span class="c1"># 6XKK</span>
+        <span class="c1"># LD Vx, byte</span>
+        <span class="c1"># Vx = kk</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x6000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">kk</span>
+
+
+        <span class="c1"># 7XKK</span>
+        <span class="c1"># ADD Vx, byte</span>
+        <span class="c1"># Vx = Vx + kk</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x7000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xff</span>
+
+        <span class="c1"># ANNN</span>
+        <span class="c1"># LD I, addr</span>
+        <span class="c1"># I = nnn</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xA000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">=</span> <span class="n">addr</span>
+
+        <span class="c1"># DXYN</span>
+        <span class="c1"># DRW Vx, Vy, n</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xD000</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">vx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">vy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0xF</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">yy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">sys_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">+</span> <span class="n">yy</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="n">x_cord</span> <span class="o">=</span> <span class="n">vx</span> <span class="o">+</span> <span class="n">xx</span>
+                    <span class="n">y_cord</span> <span class="o">=</span> <span class="n">vy</span> <span class="o">+</span> <span class="n">yy</span>
+                    <span class="k">if</span> <span class="n">x_cord</span> <span class="o">&lt;</span> <span class="n">SCREEN_WIDTH</span> <span class="ow">and</span> <span class="n">y_cord</span> <span class="o">&lt;</span> <span class="n">SCREEN_HEIGHT</span><span class="p">:</span>
+                        <span class="n">sys_bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys_byte</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">7</span> <span class="o">-</span> <span class="n">xx</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x01</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span><span class="p">[</span><span class="n">y_cord</span><span class="p">][</span><span class="n">x_cord</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">sys_bit</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0xF</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span><span class="p">[</span><span class="n">y_cord</span><span class="p">][</span><span class="n">x_cord</span><span class="p">]</span> <span class="o">^=</span> <span class="n">sys_bit</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>下面针对这些代码进行解析。</p>
+<p><strong>00E0</strong>，清屏的指令，只需要将视频缓存二维数组 screen_buf 恢复成默认，即所有元素都是 0 值。</p>
+<p><strong>1NNN</strong> 跳转指令，decode 指令得到 NNN，这是跳转的地址。然后将 PC 寄存器的值指向这个地址。即程序的执行流将会从跳转地址开始 fetch 下一条指令。类似高级语言的<code class="docutils literal notranslate"><span class="pre">goto</span></code>语句。</p>
+<p><strong>6XKK</strong> 设置寄存器 Vx 的值为 KK。decode可以得到 x 和 KK 的值，直接设置 reg_V 对应的值即可。类似高级语言的赋值语句 Vx = KK</p>
+<p><strong>7XKK</strong> 将寄存器Vx的值加上 KK，然后再存储回 Vx。类似高级语言的 += 语句。Vx = Vx + KK。通用寄存器的大小是 1-byte，加法操作会溢出。溢出之后需要抹去高位，Vx 会和 0xFF 做<code class="docutils literal notranslate"><span class="pre">与</span></code>(&amp;)操作。但是这条指令不需要设置标记位(reg_V[0xF])。</p>
+<p><strong>ANNN</strong> 设置地址寄存器I的值为 NNN。这条指令与<code class="docutils literal notranslate"><span class="pre">1NNN</span></code> 类似。都是设置寄存器的值为一个地址。不同在于这条指令修改的是索引寄存器。</p>
+<p><strong>DXYN</strong> 这一条绘图指令。Chip8 绘图使用 Sprite 方式。Sprite 即一个区域块。如下图所示，IBM logo的图案，由6个 sprite 组成。每一个 spite 是 8 * 15 的像素块，由不同的颜色标识。其中字母<code class="docutils literal notranslate"><span class="pre">I</span></code>正好是一个 sprite。字母<code class="docutils literal notranslate"><span class="pre">B</span></code>由 蓝色和绿色的两个 sprite 组成。其中绿色的 spite 和组成<code class="docutils literal notranslate"><span class="pre">M</span></code>的黄色的 sprite 有重叠。因为重叠的地方绿色 sprite 没有像素，这样的覆盖也不会影响最终的视觉效果。</p>
+<img alt="sprite" class="align-center" src="../_images/sprite.png" />
+<p>sprite 的大小固定(15*8)，因此绘制 sprite 的时候，只需要指定起点的坐标即可。例如<code class="docutils literal notranslate"><span class="pre">I</span></code>的起点坐标是(12, 8)，即存储在 Vx 和 Vy 的值。以此类推，字母 B 的蓝色 sprite 的起点是(12+9, 8)。</p>
+<p>尽管 sprite 的大小是固定的，但是 sprite 上的图案可以自由绘制，不同的 sprite 块可以叠加以绘制最终效果。就像字母<code class="docutils literal notranslate"><span class="pre">B</span></code>和字母<code class="docutils literal notranslate"><span class="pre">M</span></code>重叠的部分。</p>
+<p>对于指令 DXYN 而言，(x, y) 的值分别为 Vx 和 Vy 的值。N 表示从地址寄存器 reg_I 读取 N-byte 的数据。这些数据用二进制进行表示。0 表示不需要绘图，1 表示需要绘制。通过解析数据的二进制位，写到视频缓存二维数组 screen_buf 中。再交给 display 去绘图。</p>
+<p>执行改指令的代码会先 decode Vx 和 Vy，然后取 [reg_I， reg_I + N) 这一段空间的数据。 再针对这些数据进行遍历，求出当前 sprite 的起点坐标(x_cord, y_cord)。</p>
+<p>如果当前点的值(sys_bit)与需要绘制的bit的<code class="docutils literal notranslate"><span class="pre">与</span></code>操作为1，则需要设置标记寄存器 reg_V[0xF]的值为1。最后该值与sys_bit做异或（^）操作。</p>
+<p>指令完成之前，设置一个 CPU 的 draw_flag 属性，表示此时主循环需要绘制一帧图形。</p>
+<p>实现上面的指令之后，还需要处理一下<code class="docutils literal notranslate"><span class="pre">键盘事件</span></code>，给键盘事件增加退出监听，不然我们的模拟器会被卡住。</p>
+<dl class="py method">
+<dt id="src.tutorial.06.3_run_rom.Keyboard.poll_event">
+<code class="sig-prename descclassname"><span class="pre">Keyboard.</span></code><code class="sig-name descname"><span class="pre">poll_event</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/3_run_rom.html#Keyboard.poll_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.3_run_rom.Keyboard.poll_event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt id="src.tutorial.06.3_run_rom.main">
+<code class="sig-prename descclassname"><span class="pre">src.tutorial.06.3_run_rom.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/3_run_rom.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.3_run_rom.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>之后，屏幕就会输出 IBM 的图案。</p>
+<img alt="ibm-logo" class="align-center" src="../_images/ibm-logo.png" />
+</div>
+</div>
+<div class="section" id="id6">
+<h2>总结<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>本节的主要内容是了解 Chip8 CPU 循环的主要工作流。同时实现 SPEC 上描述的几条基本指令。比较重要的是绘图指令<code class="docutils literal notranslate"><span class="pre">DXYN</span></code>。掌握Chip8图像绘制的<code class="docutils literal notranslate"><span class="pre">Sprite</span></code>方法。</p>
+<p>接下来的任务就很简单了，就是根据 SPEC，将剩余的指令实现完成，模拟器就基本完成了。</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p>Sprite 绘图方式一直很流行</p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p>Python3.10提供了<code class="docutils literal notranslate"><span class="pre">match</span></code>语句，对于这种应用场景实现会更优雅。rust 的<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">pattern</span></code>也十分合适。</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="07_more_instruction.html" class="btn btn-neutral float-right" title="更多指令" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="05_cpu_instruction.html" class="btn btn-neutral float-left" title="CPU 与指令" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,727 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>src.tutorial.07.8_keyboard &mdash; chip8-py3 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> chip8-py3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chip8/index.html">Chip8 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../assembly/index.html">Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../disassembly/index.html">Disassembly</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">chip8-py3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>src.tutorial.07.8_keyboard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for src.tutorial.07.8_keyboard</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+<span class="n">ZOOM</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">SCREEN_WIDTH</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">SCREEN_HEIGHT</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">BG_COLOR</span> <span class="o">=</span> <span class="p">(</span><span class="mh">0xa0</span><span class="p">,</span> <span class="mh">0xe6</span><span class="p">,</span> <span class="mh">0xfa</span><span class="p">)</span>
+<span class="n">FG_COLOR</span> <span class="o">=</span> <span class="p">(</span><span class="mh">0xff</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">)</span>
+<span class="n">START_ADDR</span> <span class="o">=</span> <span class="mh">0x200</span>
+<span class="n">_MEM_SIZE</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span>
+<span class="n">_FONTSET</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 0</span>
+            <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x70</span><span class="p">,</span>  <span class="c1"># 1</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 2</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 3</span>
+            <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span>  <span class="c1"># 4</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 5</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 6</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span>  <span class="c1"># 7</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 8</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># 9</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span>  <span class="c1"># A</span>
+            <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span>  <span class="c1"># B</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># C</span>
+            <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span>  <span class="c1"># D</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span>  <span class="c1"># E</span>
+            <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">]</span>  <span class="c1"># F</span>
+
+<span class="n">_KEY_NUM</span> <span class="o">=</span> <span class="mi">16</span>
+
+<span class="n">_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_1</span><span class="p">:</span> <span class="mh">0x1</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_2</span><span class="p">:</span> <span class="mh">0x2</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_3</span><span class="p">:</span> <span class="mh">0x3</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_4</span><span class="p">:</span> <span class="mh">0xC</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_q</span><span class="p">:</span> <span class="mh">0x4</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_w</span><span class="p">:</span> <span class="mh">0x5</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_e</span><span class="p">:</span> <span class="mh">0x6</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_r</span><span class="p">:</span> <span class="mh">0xD</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_a</span><span class="p">:</span> <span class="mh">0x7</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_s</span><span class="p">:</span> <span class="mh">0x8</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_d</span><span class="p">:</span> <span class="mh">0x9</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_f</span><span class="p">:</span> <span class="mh">0xE</span><span class="p">,</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">K_z</span><span class="p">:</span> <span class="mh">0xA</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_x</span><span class="p">:</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_c</span><span class="p">:</span> <span class="mh">0xB</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_v</span><span class="p">:</span> <span class="mh">0xF</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">)):</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">class</span> <span class="nc">Memory</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 4KB memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span>
+        <span class="c1"># stack</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_FONTSET</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_FONTSET</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span><span class="p">[</span><span class="n">START_ADDR</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">stack_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stack_push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Display</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="s2">&quot;CHIP8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">((</span><span class="n">SCREEN_WIDTH</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">BG_COLOR</span><span class="p">)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="n">screen_buf</span><span class="p">)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_buf</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">BG_COLOR</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">SCREEN_HEIGHT</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">SCREEN_WIDTH</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">screen_buf</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">draw_pixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">draw_pixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="p">,</span>
+            <span class="n">FG_COLOR</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">ZOOM</span><span class="p">,</span> <span class="n">ZOOM</span><span class="p">,</span> <span class="n">ZOOM</span><span class="p">),</span>
+            <span class="mi">0</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">Instruction</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">decode_opcode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0xF000</span>
+
+    <span class="k">def</span> <span class="nf">decode_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x0F00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
+
+    <span class="k">def</span> <span class="nf">decode_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x00F0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span>
+
+    <span class="k">def</span> <span class="nf">decode_n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x000F</span>
+
+    <span class="k">def</span> <span class="nf">decode_kk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x00FF</span>
+
+    <span class="k">def</span> <span class="nf">decode_nnn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x0FFF</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_opcode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_x</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_y</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_n</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_kk</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_nnn</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_n</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">CPU</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 8 bits register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">16</span>
+
+        <span class="c1"># 16 bits register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="n">START_ADDR</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_screen</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys_pressed_buf</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">_KEY_NUM</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sound_timer</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">reset_screen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; clear screen buffer &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">SCREEN_WIDTH</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">SCREEN_HEIGHT</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">screen_buf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">opcode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">opcode</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">kk</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nnn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">nnn</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">flag</span>
+
+    <span class="k">def</span> <span class="nf">load_rom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">high_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span><span class="p">]</span>
+        <span class="n">low_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">instruction</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_byte</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="n">low_byte</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span> <span class="o">=</span> <span class="n">Instruction</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CPU.execute"><a class="viewcode-back" href="../../../../tutorial/07_more_instruction.html#src.tutorial.07.8_keyboard.CPU.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x0000</span><span class="p">:</span>
+            <span class="c1"># 00E0</span>
+            <span class="c1"># CLS</span>
+            <span class="c1"># clear the display</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x00E0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_screen</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># 00EE</span>
+            <span class="c1"># RET</span>
+            <span class="c1"># return from a subroutine</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IR</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x00EE</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">stack_pop</span><span class="p">()</span>
+
+        <span class="c1"># 1NNN</span>
+        <span class="c1"># JP addr</span>
+        <span class="c1"># jump to location nnn</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x1000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="n">addr</span>
+
+        <span class="c1"># 2NNN</span>
+        <span class="c1"># CALL addr</span>
+        <span class="c1"># call subroutine at nnn</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x2000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">stack_push</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="n">addr</span>
+
+        <span class="c1"># 3XKK</span>
+        <span class="c1"># SE Vx, byte</span>
+        <span class="c1">#</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x3000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="n">kk</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+
+        <span class="c1"># 4XKK</span>
+        <span class="c1"># SEN Vx, byte</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x4000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="n">kk</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+
+        <span class="c1"># 5XY0</span>
+        <span class="c1"># SE Vx, Vy</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x5000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+
+        <span class="c1"># 6XKK</span>
+        <span class="c1"># LD Vx, byte</span>
+        <span class="c1"># Vx = kk</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x6000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">kk</span>
+
+
+        <span class="c1"># 7XKK</span>
+        <span class="c1"># ADD Vx, byte</span>
+        <span class="c1"># Vx = Vx + kk</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x7000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xff</span>
+
+        <span class="c1"># 8XYN</span>
+        <span class="c1"># Logical and arithmetic instructions</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x8000</span><span class="p">:</span>
+            <span class="c1"># 8XY0</span>
+            <span class="c1"># LD Vx, Vy</span>
+            <span class="c1"># set vx to vy</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0000</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="c1"># 8XY1</span>
+            <span class="c1"># OR Vx, Vy</span>
+            <span class="c1"># set vx to vx or vy</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0001</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="c1"># 8XY2</span>
+            <span class="c1"># AND Vx, Vy</span>
+            <span class="c1"># set vx to vx and vy</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0002</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="c1"># 8XY3</span>
+            <span class="c1"># XOR Vx, Vy</span>
+            <span class="c1"># set vx to vx xor vy</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0003</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">^=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="c1"># 8XY4</span>
+            <span class="c1"># ADD Vx, Vy</span>
+            <span class="c1"># set vx to vx add vy  and set vf to carry</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0004</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0x0F</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x01</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mh">0xFF</span> <span class="k">else</span> <span class="mh">0x00</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xFF</span>
+
+            <span class="c1"># 8XY5</span>
+            <span class="c1"># SUB Vx, Vy</span>
+            <span class="c1"># set vx to vx sub vy</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0005</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0x0F</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="k">else</span> <span class="mh">0x01</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xFF</span>
+
+            <span class="c1"># 8XY6</span>
+            <span class="c1"># SHR Vx, {, Vy}</span>
+            <span class="c1"># set vx = vy SHR 1</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0006</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0x0F</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x01</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+
+            <span class="c1"># 8XY7</span>
+            <span class="c1"># SUBN Vx, Vy</span>
+            <span class="c1"># set vx = vy - vx set VF = NOT borrow</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x0007</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0x0F</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x01</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="k">else</span> <span class="mh">0x00</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xFF</span>
+
+            <span class="c1"># 8XYE</span>
+            <span class="c1"># SHL VX, {, Vy}</span>
+            <span class="c1">#</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="mh">0x000E</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0x0F</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x01</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mh">0xFF</span>
+
+        <span class="c1"># 9XY0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x9000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+
+        <span class="c1"># ANNN</span>
+        <span class="c1"># LD I, addr</span>
+        <span class="c1"># I = nnn</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xA000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">=</span> <span class="n">addr</span>
+
+        <span class="c1"># BNNN</span>
+        <span class="c1"># JP V0, addr</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xB000</span><span class="p">:</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nnn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">addr</span>
+
+        <span class="c1"># CXKK</span>
+        <span class="c1"># RND Vx, byte</span>
+        <span class="c1">#</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xC000</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">kk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">kk</span>
+
+
+        <span class="c1"># DXYN</span>
+        <span class="c1"># DRW Vx, Vy, n</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xD000</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">vx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">vy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0xF</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">yy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">sys_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">ram</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">+</span> <span class="n">yy</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="n">x_cord</span> <span class="o">=</span> <span class="n">vx</span> <span class="o">+</span> <span class="n">xx</span>
+                    <span class="n">y_cord</span> <span class="o">=</span> <span class="n">vy</span> <span class="o">+</span> <span class="n">yy</span>
+                    <span class="k">if</span> <span class="n">x_cord</span> <span class="o">&lt;</span> <span class="n">SCREEN_WIDTH</span> <span class="ow">and</span> <span class="n">y_cord</span> <span class="o">&lt;</span> <span class="n">SCREEN_HEIGHT</span><span class="p">:</span>
+                        <span class="n">sys_bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys_byte</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">7</span> <span class="o">-</span> <span class="n">xx</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x01</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span><span class="p">[</span><span class="n">y_cord</span><span class="p">][</span><span class="n">x_cord</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">sys_bit</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="mh">0xF</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_screen_buf</span><span class="p">[</span><span class="n">y_cord</span><span class="p">][</span><span class="n">x_cord</span><span class="p">]</span> <span class="o">^=</span> <span class="n">sys_bit</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xE000</span><span class="p">:</span>
+            <span class="c1"># EX9E</span>
+            <span class="c1"># SKP Vx</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x009E</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_pressed_buf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+
+            <span class="c1"># EXA1</span>
+            <span class="c1"># SKNP Vx</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x00A1</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_pressed_buf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="c1"># FX00</span>
+        <span class="c1">#</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0xF000</span><span class="p">:</span>
+            <span class="c1"># FX07</span>
+            <span class="c1"># LD Vx, DT</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x0007</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span>
+
+            <span class="c1"># FX0A</span>
+            <span class="c1"># LD Vx, K</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x000A</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">pressed</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_pressed_buf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                        <span class="n">pressed</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">pressed</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_PC</span> <span class="o">-=</span> <span class="mi">2</span>
+
+            <span class="c1"># FX15</span>
+            <span class="c1"># LD DT, Vx</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x0015</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delay_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+            <span class="c1"># FX18</span>
+            <span class="c1"># LD ST, Vx</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x0018</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sound_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+            <span class="c1"># FX1E</span>
+            <span class="c1"># ADD I, Vx</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kk</span> <span class="o">==</span> <span class="mh">0x001E</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_I</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_V</span><span class="p">[</span><span class="n">x</span><span class="p">]</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span> <span class="o">=</span> <span class="n">CPU</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">load_rom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rom_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_file</span><span class="p">(</span><span class="n">rom_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">load_rom</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">poll_event</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">draw_flag</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">screen_buf</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="o">.</span><span class="n">draw_flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">rom_file</span> <span class="o">=</span> <span class="s2">&quot;../../../roms/OPCODE&quot;</span>
+    <span class="n">machine</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">()</span>
+    <span class="n">machine</span><span class="o">.</span><span class="n">load_rom</span><span class="p">(</span><span class="n">rom_file</span><span class="p">)</span>
+    <span class="n">machine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, rsj217.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
