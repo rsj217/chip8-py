@@ -41,3 +41,4 @@ $ open index.html
 ```
 
 [Golang Version](https://github.com/rsj217/chip8-go)
+[Rust version]
