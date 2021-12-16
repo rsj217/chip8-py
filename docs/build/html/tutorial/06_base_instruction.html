@@ -1,39 +1,215 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="更多指令" href="07_more_instruction.html" /><link rel="prev" title="CPU 与指令" href="05_cpu_instruction.html" />
 
-<!DOCTYPE html>
+    <meta name="generator" content="sphinx-4.3.0, furo 2021.11.23"/>
+        <title>基本指令 - chip8-py3 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    
+    
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>基本指令 &#8212; chip8-py3 0.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="更多指令" href="07_more_instruction.html" />
-    <link rel="prev" title="CPU 与指令" href="05_cpu_instruction.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">chip8-py3 0.0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
+  <span class="sidebar-brand-text">chip8-py3 0.0.1 documentation</span>
   
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_emulator.html">模拟器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_cpu_instruction.html">CPU 与指令</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">基本指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_frame_keyboard.html">帧率与按键</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chip8/index.html">Chip8 API</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chip8/cpu.html">CPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chip8/memory.html">Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chip8/display.html">Display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chip8/keyboard.html">Keyboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chip8/machine.html">Machine</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../assembly/index.html">Assembly</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../disassembly/index.html">Disassembly</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
-
-          <div class="body" role="main">
-            
-  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section class="tex2jax_ignore mathjax_ignore" id="id1">
 <h1>基本指令<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference internal" href="04_display_draw.html"><span class="doc std std-doc">屏幕绘制</span></a> 一节，我们通过指定屏幕二维数组 screen_buf 在屏幕显示了 <code class="docutils literal notranslate"><span class="pre">IBM</span></code>
 的图案。本节的目标就是使用 Chip8 加载 ibm 的 rom 文件，通过 CPU 的解析执行 Chip8 指令，来显示 IBM 的图像。</p>
@@ -42,18 +218,17 @@
 <p>chip8 的 rom 文件都是二进制文件。使用 python 可以很方便的读取。下面是代码:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.tutorial.06.1_load_rom.load_file">
-<span class="sig-prename descclassname"><span class="pre">src.tutorial.06.1_load_rom.</span></span><span class="sig-name descname"><span class="pre">load_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/src/tutorial/06/1_load_rom.html#load_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.1_load_rom.load_file" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">src.tutorial.06.1_load_rom.</span></span><span class="sig-name descname"><span class="pre">load_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/src/tutorial/06/1_load_rom.html#load_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.1_load_rom.load_file" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">)):</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">data</span>
 </pre></div>
@@ -63,7 +238,6 @@
 <dt class="sig sig-object py" id="src.tutorial.06.1_load_rom.Machine.load_rom">
 <span class="sig-prename descclassname"><span class="pre">Machine.</span></span><span class="sig-name descname"><span class="pre">load_rom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rom_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/1_load_rom.html#Machine.load_rom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.1_load_rom.Machine.load_rom" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">load_rom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rom_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -76,7 +250,6 @@
 <dt class="sig sig-object py" id="src.tutorial.06.1_load_rom.Memory.write">
 <span class="sig-prename descclassname"><span class="pre">src.tutorial.06.1_load_rom.Memory.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tutorial.06.1_load_rom.Memory.write" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ram</span><span class="p">[</span><span class="n">START_ADDR</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -238,7 +411,6 @@ lbl_0x0275:
 <dt class="sig sig-object py" id="src.tutorial.06.2_ibm_rom.CPU.execute">
 <span class="sig-prename descclassname"><span class="pre">CPU.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/2_ibm_rom.html#CPU.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.2_ibm_rom.CPU.execute" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="mh">0x0000</span><span class="p">:</span>
@@ -315,7 +487,7 @@ lbl_0x0275:
 <p><strong>7XKK</strong> 将寄存器Vx的值加上 KK，然后再存储回 Vx。类似高级语言的 += 语句。Vx = Vx + KK。通用寄存器的大小是 1-byte，加法操作会溢出。溢出之后需要抹去高位，Vx 会和 0xFF 做<code class="docutils literal notranslate"><span class="pre">与</span></code>(&amp;)操作。但是这条指令不需要设置标记位(reg_V[0xF])。</p>
 <p><strong>ANNN</strong> 设置地址寄存器I的值为 NNN。这条指令与<code class="docutils literal notranslate"><span class="pre">1NNN</span></code> 类似。都是设置寄存器的值为一个地址。不同在于这条指令修改的是索引寄存器。</p>
 <p><strong>DXYN</strong> 这一条绘图指令。Chip8 绘图使用 Sprite 方式。Sprite 即一个区域块。如下图所示，IBM logo的图案，由6个 sprite 组成。每一个 spite 是 8 * 15 的像素块，由不同的颜色标识。其中字母<code class="docutils literal notranslate"><span class="pre">I</span></code>正好是一个 sprite。字母<code class="docutils literal notranslate"><span class="pre">B</span></code>由 蓝色和绿色的两个 sprite 组成。其中绿色的 spite 和组成<code class="docutils literal notranslate"><span class="pre">M</span></code>的黄色的 sprite 有重叠。因为重叠的地方绿色 sprite 没有像素，这样的覆盖也不会影响最终的视觉效果。</p>
-<img alt="sprite" class="align-center" src="../_images/sprite.png" />
+<img alt="sprite" class="align-center" src="../_images/sprite.png"/>
 <p>sprite 的大小固定(15*8)，因此绘制 sprite 的时候，只需要指定起点的坐标即可。例如<code class="docutils literal notranslate"><span class="pre">I</span></code>的起点坐标是(12, 8)，即存储在 Vx 和 Vy 的值。以此类推，字母 B 的蓝色 sprite 的起点是(12+9, 8)。</p>
 <p>尽管 sprite 的大小是固定的，但是 sprite 上的图案可以自由绘制，不同的 sprite 块可以叠加以绘制最终效果。就像字母<code class="docutils literal notranslate"><span class="pre">B</span></code>和字母<code class="docutils literal notranslate"><span class="pre">M</span></code>重叠的部分。</p>
 <p>对于指令 DXYN 而言，(x, y) 的值分别为 Vx 和 Vy 的值。N 表示从地址寄存器 reg_I 读取 N-byte 的数据。这些数据用二进制进行表示。0 表示不需要绘图，1 表示需要绘制。通过解析数据的二进制位，写到视频缓存二维数组 screen_buf 中。再交给 display 去绘图。</p>
@@ -327,7 +499,6 @@ lbl_0x0275:
 <dt class="sig sig-object py" id="src.tutorial.06.3_run_rom.Keyboard.poll_event">
 <span class="sig-prename descclassname"><span class="pre">Keyboard.</span></span><span class="sig-name descname"><span class="pre">poll_event</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/3_run_rom.html#Keyboard.poll_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.3_run_rom.Keyboard.poll_event" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">poll_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
@@ -339,16 +510,15 @@ lbl_0x0275:
 <dt class="sig sig-object py" id="src.tutorial.06.3_run_rom.main">
 <span class="sig-prename descclassname"><span class="pre">src.tutorial.06.3_run_rom.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/src/tutorial/06/3_run_rom.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.tutorial.06.3_run_rom.main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
 <p>之后，屏幕就会输出 IBM 的图案。</p>
-<img alt="ibm-logo" class="align-center" src="../_images/ibm-logo.png" />
+<img alt="ibm-logo" class="align-center" src="../_images/ibm-logo.png"/>
 </section>
 </section>
 <section id="id6">
 <h2>总结<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>本节的主要内容是了解 Chip8 CPU 循环的主要工作流。同时实现 SPEC 上描述的几条基本指令。比较重要的是绘图指令<code class="docutils literal notranslate"><span class="pre">DXYN</span></code>。掌握Chip8图像绘制的<code class="docutils literal notranslate"><span class="pre">Sprite</span></code>方法。</p>
 <p>接下来的任务就很简单了，就是根据 SPEC，将剩余的指令实现完成，模拟器就基本完成了。</p>
-<hr class="footnotes docutils" />
+<hr class="footnotes docutils"/>
 <dl class="footnote brackets">
 <dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
 <dd><p>Sprite 绘图方式一直很流行</p>
@@ -360,90 +530,79 @@ lbl_0x0275:
 </section>
 </section>
 
-
-          </div>
-          
-        </div>
+        </article>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">chip8-py3</a></h1>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="07_more_instruction.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">更多指令</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="05_cpu_instruction.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">CPU 与指令</div>
+                
+              </div>
+            </a>
+        </div>
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01_chip8.html">初识 Chip8</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_pygame.html">Pygame 简介</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_emulator.html">模拟器架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_display_draw.html">屏幕绘制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_cpu_instruction.html">CPU 与指令</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">基本指令</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07_more_instruction.html">更多指令</a></li>
-<li class="toctree-l2"><a class="reference internal" href="08_frame_keyboard.html">帧率与按键</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_tetris.html">TETRIS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="10_summary.html">Summary</a></li>
+        <div class="related-information">
+              Copyright &#169; 2021, rsj217 |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            | <a class="muted-link" href="../_sources/tutorial/06_base_instruction.md.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">基本指令</a><ul>
+<li><a class="reference internal" href="#id2">二进制</a></li>
+<li><a class="reference internal" href="#ibm">IBM</a><ul>
+<li><a class="reference internal" href="#id5">指令执行</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../chip8/index.html">Chip8 API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../assembly/index.html">Assembly</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../disassembly/index.html">Disassembly</a></li>
+<li><a class="reference internal" href="#id6">总结</a></li>
+</ul>
+</li>
 </ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">Tutorial</a><ul>
-      <li>Previous: <a href="05_cpu_instruction.html" title="previous chapter">CPU 与指令</a></li>
-      <li>Next: <a href="07_more_instruction.html" title="next chapter">更多指令</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
+          </div>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2021, rsj217.
       
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="../_sources/tutorial/06_base_instruction.md.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    </body>
 </html>
