@@ -104,7 +104,6 @@ class Disassembler:
                 continue
 
             if count > 0:
-                print(count)
                 count = 0
 
             opcode = (self.ram[self.pc] << 8) | self.ram[self.pc + 1]
@@ -218,7 +217,7 @@ def format(opcode):
 
 def main():
     disassembler = Disassembler()
-    disassembler.load_rom("../../roms/TETRIS")
+    disassembler.load_rom("../../roms/IBM")
     disassembler.discover()
     disassembler.render()
 

@@ -1,5 +1,6 @@
-import time
+import os.path
 import random
+import pygame
 from src.chip8.conf import SCREEN_WIDTH, SCREEN_HEIGHT
 from src.chip8.memory import Memory, START_ADDR
 
@@ -64,6 +65,8 @@ class CPU:
         self._delay_timer = 0
         self._sound_timer = 0
 
+        # Initialize sound
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), "beep.mp3"))
         self._IR = None
 
     def reset_screen(self):
@@ -120,7 +123,7 @@ class CPU:
 
         if self._sound_timer > 0:
             self._sound_timer -= 1
-            # pygame.mixer.music.play()
+            pygame.mixer.music.play()
 
     def fetch(self):
         high_byte = self._memory.ram[self._reg_PC]
